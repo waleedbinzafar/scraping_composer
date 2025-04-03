@@ -34,7 +34,7 @@ def total_lots_scraped(db: Session = Depends(get_db)):
 
 @router.get("/total-lots-scraped-in-10-minutes")
 def total_lots_scraped_in_10_minutes(db: Session = Depends(get_db)):
-    ten_minutes_ago = datetime.now() - timedelta(minutes=100)
+    ten_minutes_ago = datetime.now() - timedelta(minutes=10)
     count = db.query(func.count(models.Lot.id)).filter(
         models.Lot.status == "scraped",
         models.Lot.scraped_at >= ten_minutes_ago
@@ -43,7 +43,7 @@ def total_lots_scraped_in_10_minutes(db: Session = Depends(get_db)):
 
 @router.get("/throughput-10-minutes")
 def throughput_10_minutes(db: Session = Depends(get_db)):
-    ten_minutes_ago = datetime.now() - timedelta(minutes=100)
+    ten_minutes_ago = datetime.now() - timedelta(minutes=10)
     count = db.query(func.count(models.Lot.id)).filter(
         models.Lot.status == "scraped",
         models.Lot.scraped_at >= ten_minutes_ago
