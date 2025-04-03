@@ -82,3 +82,17 @@ def submit_scraped_info(
     db.refresh(lot)
 
     return {"message": "Lot updated successfully", "lot_id": lot.id}
+
+@router.post("/reset-processing-lots")
+def reset_processing_lots(db: Session = Depends(get_db)):
+    # Update all lots with status "processing" to "pending"
+    updated_rows = (
+        db.query(models.Lot)
+        .filter(models.Lot.status == "processing")
+        .update({"status": "pending"}, synchronize_session=False)
+    )
+
+    # Commit the changes
+    db.commit()
+
+    return {"message": f"Reset {updated_rows} lots from 'processing' to 'pending'"}
