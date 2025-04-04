@@ -45,7 +45,7 @@ def get_random_main_lot_batch(db: Session = Depends(get_db)):
         .filter(models.Lot.status == "pending")  # Only pending lots
         .filter(~models.Lot.lot_number.op("REGEXP")("[a-zA-Z]$"))  # Lot number does not end with an alphabet
         .order_by(func.random())  # Randomize the order
-        .limit(100)  # Limit to 10 results
+        .limit(15)  # Limit to 10 results
         .all()
     )
 
@@ -55,11 +55,26 @@ def get_random_main_lot_batch(db: Session = Depends(get_db)):
         # set the status against these lots to "processing"
         for lot in random_lots:
             lot.status = "processing"
+            lot.updated_at = datetime.now()
             db.commit()
             db.refresh(lot)
 
     # Return the list of random lots
     return random_lots
+
+@router.post("/reset-dangling-lots")
+def reset_dangling_lots(db: Session = Depends(get_db)):
+    # Update all lots with status "processing" with updated_at timestamp older than 60 minutes to "pending"
+    sixty_minutes_ago = datetime.now() - timedelta(minutes=60)
+    updated_rows = (
+        db.query(models.Lot)
+        .filter(models.Lot.status == "processing")
+        .filter(models.Lot.updated_at < sixty_minutes_ago)
+        .update({"status": "pending"}, synchronize_session=False)
+    )
+    # Commit the changes
+    db.commit()
+    return {"message": f"Reset {updated_rows} lots from 'processing' to 'pending'"}
 
 @router.post("/submit-scraped-info")
 def submit_scraped_info(
