@@ -1,8 +1,8 @@
-"""adding lot_number to lots
+"""Initial migration
 
-Revision ID: 037d4808e987
-Revises: 4501a8120b05
-Create Date: 2025-04-03 20:35:43.400438
+Revision ID: 837e7c315b86
+Revises: 
+Create Date: 2025-04-06 15:14:25.696952
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '037d4808e987'
-down_revision: Union[str, None] = '4501a8120b05'
+revision: str = '837e7c315b86'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -51,9 +51,11 @@ def upgrade() -> None:
     sa.Column('lot_link', sa.String(), nullable=True),
     sa.Column('lot_title', sa.String(), nullable=True),
     sa.Column('lot_number', sa.String(), nullable=True),
-    sa.Column('price', sa.Float(), nullable=True),
+    sa.Column('price', sa.String(), nullable=True),
     sa.Column('image_links', sa.String(), nullable=True),
     sa.Column('is_scraped', sa.Boolean(), nullable=True),
+    sa.Column('status', sa.String(), nullable=True),
+    sa.Column('lot_description', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('scraped_at', sa.DateTime(), nullable=True),

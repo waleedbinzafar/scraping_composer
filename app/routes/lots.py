@@ -30,7 +30,7 @@ def get_random_main_lot(db: Session = Depends(get_db)):
         db.query(models.Lot)
         .filter(models.Lot.is_scraped == False)  # Only unscripted lots
         .filter(models.Lot.status == "pending")  # Only pending lots
-        .filter(~models.Lot.lot_number.op("REGEXP")("[a-zA-Z]$"))  # Lot number does not end with an alphabet
+        .filter(models.Lot.lot_number.op("~")("[a-zA-Z]$"))  # Lot number does not end with an alphabet
         .order_by(func.random())  # Randomize the order
         .first()
     )
@@ -44,7 +44,7 @@ def get_random_main_lot_batch(db: Session = Depends(get_db)):
         db.query(models.Lot)
         .filter(models.Lot.is_scraped == False)  # Only unscripted lots
         .filter(models.Lot.status == "pending")  # Only pending lots
-        .filter(~models.Lot.lot_number.op("REGEXP")("[a-zA-Z]$"))  # Lot number does not end with an alphabet
+        .filter(models.Lot.lot_number.op("~")("[a-zA-Z]$"))  # Lot number does not end with an alphabet
         .order_by(func.random())  # Randomize the order
         .limit(15)  # Limit to 10 results
         .all()
